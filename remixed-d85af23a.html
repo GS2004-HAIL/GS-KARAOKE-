@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GS Karaoke Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Righteous&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0D0B1A; --panel:#171430; --panel2:#1E1A3E;
+  --neonpink:#FF3CAC; --neoncyan:#00E5FF; --neonyellow:#FFD54F;
+  --text:#EDEBFF; --dim:#8B86B8; --green:#39E58C; --line:#2C2755;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(1200px 600px at 50% -10%, #241B4E 0%, var(--bg) 55%);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:24px}
+
+/* ---------- header ---------- */
+.header{text-align:center;padding:26px 0 10px}
+.logo{font-family:'Righteous',cursive;font-size:clamp(1.9rem,5vw,3.2rem);letter-spacing:.03em;
+  background:linear-gradient(90deg,var(--neoncyan),var(--neonpink));-webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 40px rgba(255,60,172,.35)}
+.logo .mic{-webkit-text-fill-color:initial;color:initial}
+.tagline{color:var(--dim);font-size:.95rem;margin-top:4px}
+/* equalizer */
+.eq{display:flex;gap:5px;justify-content:center;margin:14px 0 6px;height:26px;align-items:flex-end}
+.eq span{width:6px;border-radius:3px;background:linear-gradient(180deg,var(--neonpink),var(--neoncyan));animation:bounce 1s ease-in-out infinite}
+.eq span:nth-child(2){animation-delay:.15s}.eq span:nth-child(3){animation-delay:.3s}
+.eq span:nth-child(4){animation-delay:.45s}.eq span:nth-child(5){animation-delay:.6s}
+.eq span:nth-child(6){animation-delay:.2s}.eq span:nth-child(7){animation-delay:.5s}
+@keyframes bounce{0%,100%{height:8px}50%{height:26px}}
+@media (prefers-reduced-motion:reduce){.eq span{animation:none;height:16px}}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:12px;justify-content:center;margin:22px 0}
+.tab{font-family:'Outfit',sans-serif;font-weight:600;font-size:1rem;padding:12px 30px;border-radius:40px;cursor:pointer;
+  border:2px solid var(--line);background:var(--panel);color:var(--dim);transition:all .2s}
+.tab.active-singer{border-color:var(--neoncyan);color:var(--neoncyan);box-shadow:0 0 18px rgba(0,229,255,.25)}
+.tab.active-dj{border-color:var(--neonpink);color:var(--neonpink);box-shadow:0 0 18px rgba(255,60,172,.25)}
+.tab:hover{transform:translateY(-2px)}
+
+/* ---------- panels ---------- */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px;margin-bottom:22px}
+h2{font-family:'Righteous',cursive;font-weight:400;font-size:1.35rem;margin-bottom:16px;letter-spacing:.02em}
+.singer-accent h2{color:var(--neoncyan)}
+.dj-accent h2{color:var(--neonpink)}
+
+/* search */
+.search{display:flex;gap:12px;margin-bottom:18px}
+.search input{flex:1;background:var(--panel2);border:1.5px solid var(--line);border-radius:12px;padding:13px 18px;
+  color:var(--text);font-size:1rem;font-family:'Outfit',sans-serif;outline:none;transition:border .2s}
+.search input:focus{border-color:var(--neoncyan);box-shadow:0 0 14px rgba(0,229,255,.2)}
+
+/* tables */
+table{width:100%;border-collapse:collapse}
+th{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+td{padding:12px;border-bottom:1px solid var(--line);font-size:.95rem}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .15s}
+.singer-accent tbody tr:hover{background:rgba(0,229,255,.06)}
+.dj-accent tbody tr:hover{background:rgba(255,60,172,.06)}
+
+.btn{font-family:'Outfit',sans-serif;font-weight:600;border:none;border-radius:10px;padding:9px 18px;cursor:pointer;font-size:.88rem;transition:all .15s}
+.btn-cyan{background:var(--neoncyan);color:#00222B}
+.btn-cyan:hover{box-shadow:0 0 16px rgba(0,229,255,.5);transform:translateY(-1px)}
+.btn-pink{background:var(--neonpink);color:#2B0018}
+.btn-pink:hover{box-shadow:0 0 16px rgba(255,60,172,.5);transform:translateY(-1px)}
+.btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--dim)}
+.btn-ghost:hover{color:var(--text);border-color:var(--dim)}
+
+/* now playing */
+.nowplaying{background:linear-gradient(135deg,#231B52,#3A1240);border:1px solid var(--neonpink);border-radius:18px;
+  padding:22px 26px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+.np-label{font-size:.75rem;letter-spacing:.18em;color:var(--neonyellow);text-transform:uppercase;margin-bottom:6px}
+.np-song{font-family:'Righteous',cursive;font-size:1.5rem}
+.np-singer{color:var(--neoncyan);font-weight:600;margin-top:2px}
+.stats{display:flex;gap:26px}
+.stat .n{font-family:'Righteous',cursive;font-size:1.5rem;color:var(--neonyellow)}
+.stat .l{font-size:.72rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
+
+.badge{display:inline-block;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px}
+.badge-paid{background:rgba(255,60,172,.15);color:var(--neonpink);border:1px solid var(--neonpink)}
+.badge-free{background:rgba(255,213,79,.12);color:var(--neonyellow);border:1px solid var(--neonyellow)}
+.money{color:var(--green);font-weight:700}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(6,4,18,.75);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px)}
+.overlay.open{display:flex}
+.modal{background:var(--panel2);border:1px solid var(--neoncyan);border-radius:18px;padding:28px;width:min(420px,92vw);box-shadow:0 0 50px rgba(0,229,255,.25)}
+.modal h3{font-family:'Righteous',cursive;font-weight:400;color:var(--neoncyan);margin-bottom:4px}
+.modal .songname{color:var(--dim);margin-bottom:18px;font-size:.95rem}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.field select,.field input{width:100%;background:var(--panel);border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;color:var(--text);font-size:.95rem;font-family:'Outfit',sans-serif;outline:none}
+.field select:focus,.field input:focus{border-color:var(--neoncyan)}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+#gsPriceField{display:none}
+
+/* toast */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--panel2);
+  border:1px solid var(--green);color:var(--text);padding:14px 26px;border-radius:14px;font-weight:600;
+  box-shadow:0 0 26px rgba(57,229,140,.3);opacity:0;transition:all .3s;z-index:200}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+.view{display:none}.view.active{display:block}
+.footer{text-align:center;color:var(--dim);font-size:.82rem;padding:18px 0 30px}
+.footer b{color:var(--neonpink)}
+.empty{text-align:center;color:var(--dim);padding:22px;font-style:italic}
+@media(max-width:640px){.stats{width:100%;justify-content:space-around}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="header">
+    <div class="logo"><span class="mic">🎤</span> GS KARAOKE <span class="mic">🎶</span></div>
+    <div class="tagline">Management System · run the night like a pro</div>
+    <div class="eq"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active-singer" id="tabSinger" onclick="switchView('singer')">🎤 Singer View</button>
+    <button class="tab" id="tabDJ" onclick="switchView('dj')">🎧 DJ Booth</button>
+  </div>
+
+  <!-- ================= SINGER VIEW ================= -->
+  <div class="view active singer-accent" id="viewSinger">
+    <div class="panel">
+      <h2>Find Your Song</h2>
+      <div class="search">
+        <input type="text" id="gsSearch" placeholder="Search by title, artist, or band…" oninput="renderSongs()">
+      </div>
+      <table>
+        <thead><tr><th>Title</th><th>Artist</th><th>Band</th><th></th></tr></thead>
+        <tbody id="songRows"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ================= DJ VIEW ================= -->
+  <div class="view dj-accent" id="viewDJ">
+    <div class="nowplaying">
+      <div>
+        <div class="np-label">▶ Up Next on the Mic</div>
+        <div class="np-song" id="npSong">—</div>
+        <div class="np-singer" id="npSinger">Waiting for singers…</div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="n" id="statQueue">0</div><div class="l">In Queue</div></div>
+        <div class="stat"><div class="n" id="statEarn">$0</div><div class="l">Earnings</div></div>
+        <div><button class="btn btn-pink" onclick="playNext()">▶ Play Next</button></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>★ Priority Queue <span style="font-size:.75rem;color:var(--dim)">— big spenders sing first</span></h2>
+      <table>
+        <thead><tr><th>#</th><th>Singer</th><th>Song</th><th>Version</th><th>Paid</th><th>Time</th></tr></thead>
+        <tbody id="prioRows"></tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2 style="color:var(--neonyellow)">♪ Free Queue <span style="font-size:.75rem;color:var(--dim)">— first come, first served</span></h2>
+      <table>
+        <thead><tr><th>#</th><th>Singer</th><th>Song</th><th>Version</th><th>Time</th></tr></thead>
+        <tbody id="freeRows"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">Built by <b>Girija Shankar Yasam (GS)</b> · GS Karaoke Management System</div>
+</div>
+
+<!-- ================= SIGN-UP MODAL ================= -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3>Sign Up to Sing</h3>
+    <div class="songname" id="modalSong"></div>
+    <div class="field">
+      <label>Your Name</label>
+      <input type="text" id="gsSinger" placeholder="Enter your name">
+    </div>
+    <div class="field">
+      <label>Version</label>
+      <select id="gsVersion"><option>Original</option><option>Duet Version</option></select>
+    </div>
+    <div class="field">
+      <label>Queue</label>
+      <select id="gsQueue" onchange="togglePrice()">
+        <option value="free">Free Queue</option>
+        <option value="priority">💰 Priority Queue (pay to skip the line)</option>
+      </select>
+    </div>
+    <div class="field" id="gsPriceField">
+      <label>Amount ($)</label>
+      <input type="number" id="gsPrice" min="1" step="1" placeholder="How much to skip the line?">
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-cyan" onclick="confirmSignup()">🎤 Sign Me Up</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ DATA (in-memory database) ============
+const gsSongs = [
+  ["Bohemian Rhapsody","Queen","Queen"],["Don't Stop Believin'","Journey","Journey"],
+  ["Sweet Caroline","Neil Diamond","Neil Diamond"],["Bad Romance","Lady Gaga","Lady Gaga"],
+  ["Shallow","Lady Gaga","Lady Gaga"],["Imagine","John Lennon","John Lennon"],
+  ["Thriller","Michael Jackson","Michael Jackson"],["Billie Jean","Michael Jackson","Michael Jackson"],
+  ["Smells Like Teen Spirit","Nirvana","Nirvana"],["Come As You Are","Nirvana","Nirvana"],
+  ["Living on a Prayer","Bon Jovi","Bon Jovi"],["I Want to Hold Your Hand","The Beatles","The Beatles"],
+  ["Hotel California","Eagles","Eagles"],["Take On Me","a-ha","a-ha"],
+  ["Don't Let Me Down","The Chainsmokers","The Chainsmokers"],["Rolling in the Deep","Adele","Adele"],
+  ["Shape of You","Ed Sheeran","Ed Sheeran"],["Uptown Funk","Bruno Mars","Mark Ronson"],
+  ["I Will Survive","Gloria Gaynor","Gloria Gaynor"],["Summer of 69","Bryan Adams","Bryan Adams"],
+  ["Boogie Wonderland","Earth, Wind & Fire","Earth, Wind & Fire"],["Somebody to Love","Queen","Queen"],
+  ["All Star","Smash Mouth","Smash Mouth"],["Dancing Queen","ABBA","ABBA"],
+  ["Africa","Toto","Toto"],["Living La Vida Loca","Ricky Martin","Ricky Martin"],
+  ["Stayin' Alive","Bee Gees","Bee Gees"],["Wake Me Up Before You Go-Go","Wham!","Wham!"],
+  ["I Wanna Dance with Somebody","Whitney Houston","Whitney Houston"],["Eye of the Tiger","Survivor","Survivor"]
+].map((s,i)=>({id:i+1,title:s[0],artist:s[1],band:s[2]}));
+
+let gsFreeQ = [
+  {singer:"johndoe",song:"Bohemian Rhapsody",version:"Original",time:"8:02 PM"},
+  {singer:"jane",song:"Sweet Caroline",version:"Duet Version",time:"8:09 PM"},
+  {singer:"emily",song:"Shallow",version:"Original",time:"8:21 PM"},
+];
+let gsPrioQ = [
+  {singer:"david",song:"Billie Jean",version:"Original",paid:25,time:"8:15 PM"},
+  {singer:"lucy",song:"Thriller",version:"Original",paid:15,time:"8:05 PM"},
+  {singer:"smith",song:"Somebody to Love",version:"Duet Version",paid:10,time:"8:30 PM"},
+];
+let earnings = 50;
+let currentSong = null;
+
+// ============ VIEWS ============
+function switchView(v){
+  document.getElementById("viewSinger").classList.toggle("active", v==="singer");
+  document.getElementById("viewDJ").classList.toggle("active", v==="dj");
+  document.getElementById("tabSinger").className = "tab" + (v==="singer" ? " active-singer" : "");
+  document.getElementById("tabDJ").className = "tab" + (v==="dj" ? " active-dj" : "");
+  if(v==="dj") renderDJ();
+}
+
+// ============ SINGER SIDE ============
+function renderSongs(){
+  const q = document.getElementById("gsSearch").value.toLowerCase();
+  const rows = gsSongs.filter(s =>
+    s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q) || s.band.toLowerCase().includes(q));
+  document.getElementById("songRows").innerHTML = rows.map(s=>`
+    <tr><td>${s.title}</td><td>${s.artist}</td><td>${s.band}</td>
+    <td style="text-align:right"><button class="btn btn-cyan" onclick="openModal(${s.id})">Sign Up</button></td></tr>`
+  ).join("") || `<tr><td colspan="4" class="empty">No songs match "${q}" 🎵</td></tr>`;
+}
+
+// ============ MODAL ============
+function openModal(id){
+  currentSong = gsSongs.find(s=>s.id===id);
+  document.getElementById("modalSong").textContent = `🎵 ${currentSong.title} — ${currentSong.artist}`;
+  document.getElementById("gsSinger").value = "";
+  document.getElementById("gsQueue").value = "free";
+  document.getElementById("gsPrice").value = "";
+  togglePrice();
+  document.getElementById("overlay").classList.add("open");
+}
+function closeModal(){ document.getElementById("overlay").classList.remove("open"); }
+function togglePrice(){
+  document.getElementById("gsPriceField").style.display =
+    document.getElementById("gsQueue").value === "priority" ? "block" : "none";
+}
+function confirmSignup(){
+  const name = document.getElementById("gsSinger").value.trim();
+  if(!name){ showToast("⚠️ Please enter your name!"); return; }
+  const version = document.getElementById("gsVersion").value;
+  const now = new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+  if(document.getElementById("gsQueue").value === "priority"){
+    const paid = parseFloat(document.getElementById("gsPrice").value);
+    if(!paid || paid <= 0){ showToast("⚠️ Enter an amount to join the priority queue!"); return; }
+    gsPrioQ.push({singer:name, song:currentSong.title, version, paid, time:now});
+    gsPrioQ.sort((a,b)=> b.paid - a.paid);
+    earnings += paid;
+    showToast(`★ ${name} paid $${paid.toFixed(2)} — priority queue!`);
+  } else {
+    gsFreeQ.push({singer:name, song:currentSong.title, version, time:now});
+    showToast(`✔ ${name} joined the free queue!`);
+  }
+  closeModal();
+  renderDJ();
+}
+
+// ============ DJ SIDE ============
+function renderDJ(){
+  document.getElementById("prioRows").innerHTML = gsPrioQ.map((e,i)=>`
+    <tr><td>${i+1}</td><td>${e.singer} <span class="badge badge-paid">PAID</span></td>
+    <td>${e.song}</td><td>${e.version}</td><td class="money">$${e.paid.toFixed(2)}</td><td>${e.time}</td></tr>`
+  ).join("") || `<tr><td colspan="6" class="empty">Priority queue is empty</td></tr>`;
+
+  document.getElementById("freeRows").innerHTML = gsFreeQ.map((e,i)=>`
+    <tr><td>${i+1}</td><td>${e.singer} <span class="badge badge-free">FREE</span></td>
+    <td>${e.song}</td><td>${e.version}</td><td>${e.time}</td></tr>`
+  ).join("") || `<tr><td colspan="5" class="empty">Free queue is empty</td></tr>`;
+
+  const next = gsPrioQ[0] || gsFreeQ[0];
+  document.getElementById("npSong").textContent = next ? `"${next.song}"` : "—";
+  document.getElementById("npSinger").textContent = next ? `🎤 ${next.singer} · ${next.version}` : "Waiting for singers…";
+  document.getElementById("statQueue").textContent = gsPrioQ.length + gsFreeQ.length;
+  document.getElementById("statEarn").textContent = "$" + earnings.toFixed(0);
+}
+function playNext(){
+  let next;
+  if(gsPrioQ.length) next = gsPrioQ.shift();
+  else if(gsFreeQ.length) next = gsFreeQ.shift();
+  if(next) showToast(`🎤 NOW ON STAGE: ${next.singer} — "${next.song}"!`);
+  else showToast("Queue is empty — go find some singers! 🎶");
+  renderDJ();
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove("show"), 2600);
+}
+
+// init
+renderSongs();
+renderDJ();
+document.getElementById("overlay").addEventListener("click", e=>{ if(e.target.id==="overlay") closeModal(); });
+</script>
+</body>
+</html>
